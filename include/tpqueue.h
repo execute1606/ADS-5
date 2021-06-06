@@ -1,15 +1,10 @@
 // Copyright 2021 NNTU-CS
-#include <iostream>
-#include <cassert>
 #ifndef INCLUDE_TPQUEUE_H_
 #define INCLUDE_TPQUEUE_H_
+#include <cassert>
+#include <iostream>
 
-struct SYM {
-    char ch;
-    int prior;
-};
-
-template <typename T>
+template<typename T>
 class TPQueue {
     struct ITEM {
         T data;
@@ -20,74 +15,78 @@ public:
     ~TPQueue();
     void push(const T&);
     T pop();
-    void print()const;
-
+    void print() const;
 private:
     TPQueue::ITEM* create(const T&);
     ITEM* head;
     ITEM* tail;
 };
-
-template<typename T>
-TPQueue<T>::~TPQueue() {
-    while (head) {
-        pop();
-    }
-}
-
-template<typename T>
-typename TPQueue<T>::ITEM* TPQueue<T>::create(const T& data) {
+template <typename T>
+typename TPQueue<T>::ITEM* TPQueue <T>::create(const T& data) {
     ITEM* item = new ITEM;
     item->data = data;
     item->next = nullptr;
     return item;
 }
-
 template <typename T>
+TPQueue <T>::~TPQueue() {
+    while (head)
+        pop();
+}
+template<typename T>
 void TPQueue<T>::push(const T& data) {
-    if (head) {
-        if (head->data.prior < data.prior) {
-            auto* temp = head;
-            head = create(data);
-            head->next = temp;
-            return;
+    if (tail && head) {
+        ITEM* temp = head;
+        if (data.prior > temp->data.prior) {
+            temp = create(data);
+            temp->next = head;
+            head = temp;
         }
-        ITEM* Illya = this->head;
-        while (Illya->next != nullptr) {
-            if (Illya->next->data.prior < data.prior) {
-                auto* temp = Illya->next;
-                Illya->next = create(data);
-                Illya->next->next = temp;
-                return;
+        else {
+            while (temp->next) {
+                if (data.prior > temp->next->data.prior) {
+                    ITEM* t = create(data);
+                    t->next = temp->next;
+                    temp->next = t;
+                    break;
+                }
+                else {
+                    temp = temp->next;
+                }
             }
-            Illya = Illya->next;
         }
-        Illya->next = create(data);
-        tail = Illya->next;
+        if (!temp->next) {
+            tail->next = create(data);
+            tail = tail->next;
+        }
     }
     else {
         head = create(data);
         tail = head;
     }
 }
-
 template<typename T>
 T TPQueue<T>::pop() {
     if (head) {
-        T Shirou = head->data;
-        head = head->next;
-        return Shirou;
+        ITEM* temp = head->next;
+        T data = head->data;
+        delete head;
+        head = temp;
+        return data;
     }
 }
-
-template <typename T>
+template<typename T>
 void TPQueue<T>::print() const {
-    ITEM* Acha = head;
-    while (Acha) {
-        std::cout << Acha->data.ch << std::endl;
-        Acha = Acha->next;
+    ITEM* temp = head;
+    while (temp) {
+        std::cout << temp->data << "␣";
+        temp = temp->next;
     }
     std::cout << std::endl;
 }
+struct SYM {
+    char ch;
+    int  priority;
+};
 
 #endif // INCLUDE_TPQUEUE_H_
