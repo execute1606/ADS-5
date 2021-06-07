@@ -4,11 +4,6 @@
 #include <cassert>
 #include <iostream>
 
-#ifndef INCLUDE_TPQUEUE_H_
-#define INCLUDE_TPQUEUE_H_
-#include <cassert>
-#include <iostream>
-
 template<typename T>
 class TPQueue {
   // Сюда помещается описание структуры "Очередь с приоритетами"
@@ -43,13 +38,13 @@ template<typename T>
 void TPQueue<T>::push(const T &data) {
   if (tail && head) {
     ITEM *temp = head;
-    if (data.priori > temp->data.priori) {
+    if (data.prior > temp->data.prior) {
       temp = create(data);
       temp->next = head;
       head = temp;
     } else {
       while (temp->next) {
-        if (data.prior > temp->next->data.priori) {
+        if (data.prior > temp->next->data.prior) {
           ITEM *t = create(data);
           t->next = temp->next;
           temp->next = t;
@@ -89,7 +84,7 @@ void TPQueue<T>::print() const {
 }
 struct SYM {
   char ch;
-  int  priori;
+  int  prior;
 };
 
 #endif // INCLUDE_TPQUEUE_H_
